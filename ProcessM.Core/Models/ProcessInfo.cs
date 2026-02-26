@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ProcessManager.Models
+namespace ProcessM.Core.Models
 {
     public class ProcessInfo
     {

@@ -3,16 +3,17 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using ProcessManager.Models;
-using ProcessManager.Services;
+using ProcessM.Core.Models;
+using ProcessM.Core.Services;
 
-namespace ProcessManager.ViewModels
+namespace ProcessM.Core.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<ProcessTreeNode> Processes { get; } =
-            new ObservableCollection<ProcessTreeNode>();
+        private readonly IProcessService _service;
+
+        public ObservableCollection<ProcessTreeNode> Processes { get; }
+            = new ObservableCollection<ProcessTreeNode>();
 
         private ProcessTreeNode _selectedProcess;
         public ProcessTreeNode SelectedProcess
@@ -25,40 +26,32 @@ namespace ProcessManager.ViewModels
             }
         }
 
-        public MainViewModel()
+        // для XAML
+        public MainViewModel() : this(new ProcessService())
         {
-            StartLoop();
         }
 
-        private async void StartLoop()
+        // основной конструктор (для тестов)
+        public MainViewModel(IProcessService service)
         {
-            while (true)
-            {
-                var list = await Task.Run(() => ProcessService.GetProcesses());
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SyncCollection(list);
-                });
-
-                await Task.Delay(2000);
-            }
+            _service = service;
         }
 
-        /// <summary>
-        /// СИНХРОНИЗАЦИЯ БЕЗ СБРОСА ВЫБОРА
-        /// </summary>
-        private void SyncCollection(System.Collections.Generic.List<ProcessTreeNode> newList)
+        // 🔹 теперь это вызывается извне (из UI)
+        public async Task RefreshAsync()
         {
-            // Обновляем существующие
+            var list = await Task.Run(() => _service.GetProcesses());
+            SyncCollection(list);
+        }
+
+        public void SyncCollection(System.Collections.Generic.List<ProcessTreeNode> newList)
+        {
             foreach (var proc in newList)
             {
                 var existing = Processes.FirstOrDefault(p => p.Id == proc.Id);
 
                 if (existing == null)
-                {
                     Processes.Add(proc);
-                }
                 else
                 {
                     existing.Memory = proc.Memory;
@@ -66,7 +59,6 @@ namespace ProcessManager.ViewModels
                 }
             }
 
-            // Удаляем закрытые процессы
             for (int i = Processes.Count - 1; i >= 0; i--)
             {
                 if (!newList.Any(p => p.Id == Processes[i].Id))
@@ -77,17 +69,18 @@ namespace ProcessManager.ViewModels
         public void KillSelected()
         {
             if (SelectedProcess != null)
-                ProcessService.KillProcess(SelectedProcess.Id);
+                _service.KillProcess(SelectedProcess.Id);
         }
 
         public void ChangePriority(ProcessPriorityClass priority)
         {
             if (SelectedProcess != null)
-                ProcessService.SetPriority(SelectedProcess.Id, priority);
+                _service.SetPriority(SelectedProcess.Id, priority);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string n) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
+
+        private void OnPropertyChanged(string name) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

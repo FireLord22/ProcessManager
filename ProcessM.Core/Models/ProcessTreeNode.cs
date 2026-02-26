@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ProcessManager.Models
+namespace ProcessM.Core.Models
 {
     public class ProcessTreeNode : INotifyPropertyChanged
     {

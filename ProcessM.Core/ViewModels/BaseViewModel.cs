@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ProcessManager.ViewModels
+namespace ProcessM.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {

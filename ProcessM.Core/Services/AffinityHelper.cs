@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProcessManager.Services
+namespace ProcessM.Core.Services
 {
     public static class AffinityHelper
     {

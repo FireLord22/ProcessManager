@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ProcessManager.Models
+namespace ProcessM.Core.Models
 {
     public class ThreadInfo
     {
@@ -9,7 +9,7 @@ namespace ProcessManager.Models
 
         public ThreadPriorityLevel Priority { get; set; }
 
-        public ThreadState State { get; set; }
+        public System.Diagnostics.ThreadState State { get; set; }
 
         public TimeSpan CpuTime { get; set; }
     }

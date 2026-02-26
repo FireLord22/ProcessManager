@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using ProcessManager.Models;
+using ProcessM.Core.Models;
 
-namespace ProcessManager.Services
+namespace ProcessM.Core.Services
 {
-    public static class ProcessService
+    public class ProcessService : IProcessService
     {
-        public static List<ProcessTreeNode> GetProcesses()
+        public List<ProcessTreeNode> GetProcesses()
         {
             var list = new List<ProcessTreeNode>();
 
@@ -27,7 +27,7 @@ namespace ProcessManager.Services
             return list;
         }
 
-        public static void KillProcess(int id)
+        public void KillProcess(int id)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace ProcessManager.Services
             catch { }
         }
 
-        public static void SetPriority(int id, ProcessPriorityClass priority)
+        public void SetPriority(int id, ProcessPriorityClass priority)
         {
             try
             {
