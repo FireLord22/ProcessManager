@@ -6,7 +6,7 @@ namespace ProcessM.Core.Services
 {
     public interface IProcessService
     {
-        List<ProcessTreeNode> GetProcesses();
+        List<ProcessInfo> GetProcesses();
         void KillProcess(int id);
         void SetPriority(int id, ProcessPriorityClass priority);
     }

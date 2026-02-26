@@ -12,10 +12,9 @@ public class MainViewModelTests
     public void KillSelected_ShouldCallService()
     {
         var mock = new Mock<IProcessService>();
-
         var vm = new MainViewModel(mock.Object);
 
-        vm.SelectedProcess = new ProcessTreeNode { Id = 123 };
+        vm.SelectedProcess = new ProcessInfo { Id = 123 };
 
         vm.KillSelected();
 
@@ -26,10 +25,9 @@ public class MainViewModelTests
     public void ChangePriority_ShouldCallService()
     {
         var mock = new Mock<IProcessService>();
-
         var vm = new MainViewModel(mock.Object);
 
-        vm.SelectedProcess = new ProcessTreeNode { Id = 55 };
+        vm.SelectedProcess = new ProcessInfo { Id = 55 };
 
         vm.ChangePriority(ProcessPriorityClass.High);
 
@@ -40,12 +38,11 @@ public class MainViewModelTests
     public void SyncCollection_ShouldAddProcesses()
     {
         var mock = new Mock<IProcessService>();
-
         var vm = new MainViewModel(mock.Object);
 
-        var list = new List<ProcessTreeNode>
+        var list = new List<ProcessInfo>
         {
-            new ProcessTreeNode{ Id = 1, Name="Test", Memory=100 }
+            new ProcessInfo { Id = 1, Name = "Test", MemoryUsage = 100 }
         };
 
         vm.SyncCollection(list);
