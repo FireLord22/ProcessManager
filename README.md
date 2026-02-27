@@ -59,15 +59,8 @@ ProcessManager — настольное WPF-приложение для мони
   Unit-тестирование: xUnit, Moq
   Среда разработки: Visual Studio
 
-ProcessM.Core/
-├── Models/        — модели данных процессов
-├── Services/      — работа с системными процессами
-├── ViewModels/    — логика MVVM
-ProcessManager/
-├── Views/         — пользовательский интерфейс
-xUnitTestProcessManager/
-├── Tests/         — модульные тесты
-└── App.xaml       — точка входа
+<img width="321" height="297" alt="image" src="https://github.com/user-attachments/assets/e1eeacfc-912a-4f48-bfe6-8d8a2075e459" />
+
 
 Как использовать:
   Запустите приложение
