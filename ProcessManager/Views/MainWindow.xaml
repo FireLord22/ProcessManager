@@ -10,7 +10,6 @@
 
     <Window.Resources>
 
-        <!-- ===== КНОПКИ ===== -->
         <Style TargetType="Button">
             <Setter Property="Background" Value="#3C7DFF"/>
             <Setter Property="Foreground" Value="White"/>
@@ -31,7 +30,6 @@
             </Setter>
         </Style>
 
-        <!-- ===== DATAGRID ===== -->
         <Style TargetType="DataGrid">
             <Setter Property="Background" Value="#252526"/>
             <Setter Property="Foreground" Value="White"/>
@@ -62,7 +60,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- ===== ТЁМНЫЙ COMBOBOX ===== -->
         <Style TargetType="ComboBox">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Background" Value="#2D2D30"/>
@@ -77,16 +74,12 @@
 
             <Style.Triggers>
 
-                <!-- Наведение мыши -->
                 <Trigger Property="IsHighlighted" Value="True">
                     <Setter Property="Background" Value="#3C7DFF"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>
 
-                <!-- ВЫБРАННЫЙ ЭЛЕМЕНТ -->
                 <Trigger Property="IsSelected" Value="True">
-                    <!-- Было слишком светло -->
-                    <!-- Теперь тёмно-синий -->
                     <Setter Property="Background" Value="#1E3A8A"/>
                     <Setter Property="Foreground" Value="Gray"/>
                 </Trigger>
@@ -109,14 +102,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Заголовок -->
         <TextBlock Text="Диспетчер процессов"
                    FontSize="26"
                    FontWeight="Bold"
                    Foreground="White"
                    Margin="0,0,0,15"/>
 
-        <!-- Таблица процессов -->
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding Processes}"
                   SelectedItem="{Binding SelectedProcess}"
@@ -127,11 +118,11 @@
                 <DataGridTextColumn Header="PID" Binding="{Binding Id}" Width="80"/>
                 <DataGridTextColumn Header="Процесс" Binding="{Binding Name}" Width="*"/>
                 <DataGridTextColumn Header="RAM (MB)" Binding="{Binding Memory}" Width="120"/>
+                <DataGridTextColumn Header="Приоритет" Binding="{Binding Priority}" Width="140"/>
             </DataGrid.Columns>
 
         </DataGrid>
 
-        <!-- Панель управления -->
         <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"

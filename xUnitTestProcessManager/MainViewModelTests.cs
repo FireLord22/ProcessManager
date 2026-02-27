@@ -14,7 +14,7 @@ public class MainViewModelTests
         var mock = new Mock<IProcessService>();
         var vm = new MainViewModel(mock.Object);
 
-        vm.SelectedProcess = new ProcessInfo { Id = 123 };
+        vm.SelectedProcess = new ProcessTreeNode { Id = 123 };
 
         vm.KillSelected();
 
@@ -27,7 +27,7 @@ public class MainViewModelTests
         var mock = new Mock<IProcessService>();
         var vm = new MainViewModel(mock.Object);
 
-        vm.SelectedProcess = new ProcessInfo { Id = 55 };
+        vm.SelectedProcess = new ProcessTreeNode { Id = 55 };
 
         vm.ChangePriority(ProcessPriorityClass.High);
 
@@ -40,9 +40,15 @@ public class MainViewModelTests
         var mock = new Mock<IProcessService>();
         var vm = new MainViewModel(mock.Object);
 
-        var list = new List<ProcessInfo>
+        var list = new List<ProcessTreeNode>
         {
-            new ProcessInfo { Id = 1, Name = "Test", MemoryUsage = 100 }
+            new ProcessTreeNode
+            {
+                Id = 1,
+                Name = "Test",
+                Memory = 100,
+                Priority = ProcessPriorityClass.Normal
+            }
         };
 
         vm.SyncCollection(list);

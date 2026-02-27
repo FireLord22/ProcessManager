@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using ProcessM.Core.Models;
 
 namespace ProcessM.Core.Services
@@ -19,24 +18,13 @@ namespace ProcessM.Core.Services
                     {
                         Id = p.Id,
                         Name = p.ProcessName,
-                        Priority = p.PriorityClass,
                         MemoryUsage = p.WorkingSet64 / 1024 / 1024,
                         ThreadCount = p.Threads.Count,
                         CpuTime = p.TotalProcessorTime,
-                        AffinityMask = p.ProcessorAffinity,
-                        Threads = p.Threads.Cast<ProcessThread>().Select(t => new ThreadInfo
-                        {
-                            Id = t.Id,
-                            Priority = t.PriorityLevel,
-                            State = t.ThreadState,
-                            CpuTime = t.TotalProcessorTime
-                        }).ToList()
+                        Priority = SafePriority(p)
                     });
                 }
-                catch
-                {
-                    // нет доступа к процессу
-                }
+                catch { }
             }
 
             return list;
@@ -52,6 +40,12 @@ namespace ProcessM.Core.Services
         {
             try { Process.GetProcessById(id).PriorityClass = priority; }
             catch { }
+        }
+
+        private ProcessPriorityClass SafePriority(Process p)
+        {
+            try { return p.PriorityClass; }
+            catch { return ProcessPriorityClass.Normal; }
         }
     }
 }
