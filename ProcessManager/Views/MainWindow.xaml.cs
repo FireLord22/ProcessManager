@@ -45,5 +45,10 @@ namespace ProcessManager.Views
                 _vm.ChangePriority(priority);
             }
         }
+
+        private void ApplyAffinity_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.ApplyAffinity();
+        }
     }
 }

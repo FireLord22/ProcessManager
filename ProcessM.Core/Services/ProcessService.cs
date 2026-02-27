@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using ProcessM.Core.Models;
 
@@ -21,10 +22,14 @@ namespace ProcessM.Core.Services
                         MemoryUsage = p.WorkingSet64 / 1024 / 1024,
                         ThreadCount = p.Threads.Count,
                         CpuTime = p.TotalProcessorTime,
-                        Priority = SafePriority(p)
+                        Priority = SafePriority(p),
+                        AffinityMask = SafeAffinity(p)
                     });
                 }
-                catch { }
+                catch
+                {
+                    // игнорируем системные процессы
+                }
             }
 
             return list;
@@ -32,20 +37,71 @@ namespace ProcessM.Core.Services
 
         public void KillProcess(int id)
         {
-            try { Process.GetProcessById(id).Kill(); }
-            catch { }
+            try
+            {
+                Process.GetProcessById(id).Kill();
+            }
+            catch
+            {
+            }
         }
 
         public void SetPriority(int id, ProcessPriorityClass priority)
         {
-            try { Process.GetProcessById(id).PriorityClass = priority; }
-            catch { }
+            try
+            {
+                Process.GetProcessById(id).PriorityClass = priority;
+            }
+            catch
+            {
+            }
+        }
+
+        public IntPtr GetAffinity(int id)
+        {
+            try
+            {
+                return Process.GetProcessById(id).ProcessorAffinity;
+            }
+            catch
+            {
+                return IntPtr.Zero;
+            }
+        }
+
+        public void SetAffinity(int id, IntPtr mask)
+        {
+            try
+            {
+                Process.GetProcessById(id).ProcessorAffinity = mask;
+            }
+            catch
+            {
+            }
         }
 
         private ProcessPriorityClass SafePriority(Process p)
         {
-            try { return p.PriorityClass; }
-            catch { return ProcessPriorityClass.Normal; }
+            try
+            {
+                return p.PriorityClass;
+            }
+            catch
+            {
+                return ProcessPriorityClass.Normal;
+            }
+        }
+
+        private IntPtr SafeAffinity(Process p)
+        {
+            try
+            {
+                return p.ProcessorAffinity;
+            }
+            catch
+            {
+                return IntPtr.Zero;
+            }
         }
     }
 }

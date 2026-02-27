@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -15,6 +17,9 @@ namespace ProcessM.Core.ViewModels
         public ObservableCollection<ProcessTreeNode> Processes { get; }
             = new ObservableCollection<ProcessTreeNode>();
 
+        public ObservableCollection<CpuCore> Cores { get; }
+            = new ObservableCollection<CpuCore>();
+
         private ProcessTreeNode _selectedProcess;
         public ProcessTreeNode SelectedProcess
         {
@@ -23,6 +28,7 @@ namespace ProcessM.Core.ViewModels
             {
                 _selectedProcess = value;
                 OnPropertyChanged(nameof(SelectedProcess));
+                LoadAffinity();
             }
         }
 
@@ -33,14 +39,15 @@ namespace ProcessM.Core.ViewModels
         public MainViewModel(IProcessService service)
         {
             _service = service;
+
+            for (int i = 0; i < Environment.ProcessorCount; i++)
+                Cores.Add(new CpuCore(i));
         }
 
         public async Task RefreshAsync()
         {
-            // Получаем "полные" данные
             var processInfoList = await Task.Run(() => _service.GetProcesses());
 
-            // Преобразуем в UI-модель
             var uiList = processInfoList.Select(p => new ProcessTreeNode
             {
                 Id = p.Id,
@@ -49,11 +56,10 @@ namespace ProcessM.Core.ViewModels
                 Priority = p.Priority
             }).ToList();
 
-            // Передаем в метод синхронизации коллекции
             SyncCollection(uiList);
         }
 
-        public void SyncCollection(System.Collections.Generic.List<ProcessTreeNode> newList)
+        public void SyncCollection(List<ProcessTreeNode> newList)
         {
             foreach (var proc in newList)
             {
@@ -86,6 +92,26 @@ namespace ProcessM.Core.ViewModels
         {
             if (SelectedProcess != null)
                 _service.SetPriority(SelectedProcess.Id, priority);
+        }
+
+        public void ApplyAffinity()
+        {
+            if (SelectedProcess == null) return;
+
+            var mask = AffinityHelper.BuildMask(
+                Cores.Select(c => c.IsEnabled).ToArray());
+
+            _service.SetAffinity(SelectedProcess.Id, mask);
+        }
+
+        private void LoadAffinity()
+        {
+            if (SelectedProcess == null) return;
+
+            var mask = _service.GetAffinity(SelectedProcess.Id);
+
+            foreach (var core in Cores)
+                core.IsEnabled = AffinityHelper.IsCoreEnabled(mask, core.Index);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

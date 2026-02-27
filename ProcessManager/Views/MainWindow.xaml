@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:ProcessM.Core.ViewModels;assembly=ProcessM.Core"
         Title="Диспетчер процессов"
-        Height="650"
+        Height="750"
         Width="1000"
         Background="#1E1E1E"
         WindowStartupLocation="CenterScreen">
@@ -52,7 +52,6 @@
         <Style TargetType="DataGridCell">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
-
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="#3C7DFF"/>
@@ -71,19 +70,15 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Background" Value="#2D2D30"/>
             <Setter Property="Padding" Value="6"/>
-
             <Style.Triggers>
-
                 <Trigger Property="IsHighlighted" Value="True">
                     <Setter Property="Background" Value="#3C7DFF"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>
-
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="#1E3A8A"/>
                     <Setter Property="Foreground" Value="Gray"/>
                 </Trigger>
-
             </Style.Triggers>
         </Style>
 
@@ -99,6 +94,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -120,7 +116,6 @@
                 <DataGridTextColumn Header="RAM (MB)" Binding="{Binding Memory}" Width="120"/>
                 <DataGridTextColumn Header="Приоритет" Binding="{Binding Priority}" Width="140"/>
             </DataGrid.Columns>
-
         </DataGrid>
 
         <StackPanel Grid.Row="2"
@@ -135,20 +130,49 @@
             <ComboBox x:Name="priorityBox"
                       Width="200"
                       Margin="10,0">
-
                 <ComboBoxItem Content="Idle"/>
                 <ComboBoxItem Content="BelowNormal"/>
                 <ComboBoxItem Content="Normal" IsSelected="True"/>
                 <ComboBoxItem Content="AboveNormal"/>
                 <ComboBoxItem Content="High"/>
                 <ComboBoxItem Content="RealTime"/>
-
             </ComboBox>
 
             <Button Content="Изменить приоритет"
                     Width="180"
                     Click="Priority_Click"/>
+        </StackPanel>
 
+        <!-- ✅ ДОБАВЛЕННЫЙ БЛОК CPU AFFINITY -->
+        <StackPanel Grid.Row="3"
+                    Margin="0,25,0,0">
+
+            <TextBlock Text="CPU Affinity"
+                       Foreground="White"
+                       FontSize="18"
+                       Margin="0,0,0,10"/>
+
+            <ItemsControl ItemsSource="{Binding Cores}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox Content="{Binding Index, StringFormat=CPU {0}}"
+                                  IsChecked="{Binding IsEnabled, Mode=TwoWay}"
+                                  Margin="5"
+                                  Foreground="White"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Content="Применить Affinity"
+                    Width="200"
+                    HorizontalAlignment="Left"
+                    Click="ApplyAffinity_Click"/>
         </StackPanel>
 
     </Grid>
