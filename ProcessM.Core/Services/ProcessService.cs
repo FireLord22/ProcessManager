@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using ProcessM.Core.Models;
 
@@ -26,9 +27,16 @@ namespace ProcessM.Core.Services
                         AffinityMask = SafeAffinity(p)
                     });
                 }
-                catch
+                catch (Exception ex) when (
+    ex is Win32Exception ||
+    ex is InvalidOperationException)
                 {
-                    // игнорируем системные процессы
+                    list.Add(new ProcessInfo
+                    {
+                        Id = p.Id,
+                        Name = p.ProcessName,
+                        
+                    });
                 }
             }
 
@@ -102,6 +110,32 @@ namespace ProcessM.Core.Services
             {
                 return IntPtr.Zero;
             }
+        }
+
+        public List<ThreadInfo> GetThreads(int processId)
+        {
+            var list = new List<ThreadInfo>();
+
+            try
+            {
+                var p = Process.GetProcessById(processId);
+
+                foreach (ProcessThread t in p.Threads)
+                {
+                    list.Add(new ThreadInfo
+                    {
+                        Id = t.Id,
+                        Priority = t.PriorityLevel,
+                        State = t.ThreadState,
+                        CpuTime = t.TotalProcessorTime
+                    });
+                }
+            }
+            catch
+            {
+            }
+
+            return list;
         }
     }
 }

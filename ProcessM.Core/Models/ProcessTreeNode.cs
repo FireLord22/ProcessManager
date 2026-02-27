@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace ProcessM.Core.Models
@@ -44,5 +45,19 @@ namespace ProcessM.Core.Models
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string n) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
+
+        private int _threads;
+        public int Threads
+        {
+            get => _threads;
+            set { _threads = value; OnPropertyChanged(nameof(Threads)); }
+        }
+
+        private TimeSpan _cpuTime;
+        public TimeSpan CpuTime
+        {
+            get => _cpuTime;
+            set { _cpuTime = value; OnPropertyChanged(nameof(CpuTime)); }
+        }
     }
 }

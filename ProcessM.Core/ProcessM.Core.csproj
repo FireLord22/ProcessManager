@@ -5,4 +5,8 @@
     <UseWPF>false</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="System.Management" />
+  </ItemGroup>
+
 </Project>

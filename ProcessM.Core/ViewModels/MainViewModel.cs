@@ -17,6 +17,8 @@ namespace ProcessM.Core.ViewModels
         public ObservableCollection<ProcessTreeNode> Processes { get; }
             = new ObservableCollection<ProcessTreeNode>();
 
+        public ObservableCollection<ThreadInfo> Threads { get; } = new ObservableCollection<ThreadInfo>();
+
         public ObservableCollection<CpuCore> Cores { get; }
             = new ObservableCollection<CpuCore>();
 
@@ -29,6 +31,7 @@ namespace ProcessM.Core.ViewModels
                 _selectedProcess = value;
                 OnPropertyChanged(nameof(SelectedProcess));
                 LoadAffinity();
+                LoadThreads();
             }
         }
 
@@ -55,8 +58,10 @@ namespace ProcessM.Core.ViewModels
                 Memory = p.MemoryUsage,
                 Priority = p.Priority,
                 CpuAffinity = AffinityHelper.MaskToString(
-        p.AffinityMask.ToInt64(),
-        Environment.ProcessorCount)
+                    p.AffinityMask.ToInt64(),
+                    Environment.ProcessorCount),
+                Threads = p.ThreadCount,
+                CpuTime = p.CpuTime,
             }).ToList();
 
             SyncCollection(uiList);
@@ -100,7 +105,7 @@ namespace ProcessM.Core.ViewModels
                 _service.SetPriority(SelectedProcess.Id, priority);
         }
 
-        public void ApplyAffinity()
+        public async void ApplyAffinity()
         {
             if (SelectedProcess == null) return;
 
@@ -110,6 +115,8 @@ namespace ProcessM.Core.ViewModels
             var maskPtr = new IntPtr(maskLong);
 
             _service.SetAffinity(SelectedProcess.Id, maskPtr);
+
+            await RefreshAsync();
         }
 
         private void LoadAffinity()
@@ -126,5 +133,27 @@ namespace ProcessM.Core.ViewModels
 
         private void OnPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private void LoadThreads()
+        {
+            Threads.Clear();
+
+            if (SelectedProcess == null)
+                return;
+
+            List<ThreadInfo> list;
+
+            try
+            {
+                list = _service.GetThreads(SelectedProcess.Id);
+            }
+            catch
+            {
+                return;
+            }
+
+            foreach (var t in list)
+                Threads.Add(t);
+        }
     }
 }

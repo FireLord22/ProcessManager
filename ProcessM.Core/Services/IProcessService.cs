@@ -8,6 +8,7 @@ namespace ProcessM.Core.Services
     public interface IProcessService
     {
         List<ProcessInfo> GetProcesses();
+        List<ThreadInfo> GetThreads(int processId);
 
         void KillProcess(int id);
 

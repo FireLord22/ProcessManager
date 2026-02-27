@@ -93,9 +93,10 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="2*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Диспетчер процессов"
@@ -116,10 +117,13 @@
                 <DataGridTextColumn Header="RAM (MB)" Binding="{Binding Memory}" Width="120"/>
                 <DataGridTextColumn Header="Приоритет" Binding="{Binding Priority}" Width="140"/>
 
-                <!-- 🔥 ДОБАВЛЕНА КОЛОНКА CPU -->
                 <DataGridTextColumn Header="CPU"
-                                    Binding="{Binding CpuAffinity}"
-                                    Width="180"/>
+                        Binding="{Binding CpuAffinity}"
+                        Width="160"/>
+
+                <DataGridTextColumn Header="CPU Time"
+                        Binding="{Binding CpuTime}"
+                        Width="150"/>
             </DataGrid.Columns>
         </DataGrid>
 
@@ -148,7 +152,6 @@
                     Click="Priority_Click"/>
         </StackPanel>
 
-        <!-- CPU AFFINITY БЛОК -->
         <StackPanel Grid.Row="3"
                     Margin="0,25,0,0">
 
@@ -174,11 +177,38 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Button Content="Применить Affinity"
+            <Button Content="Применить"
                     Width="200"
                     HorizontalAlignment="Left"
                     Click="ApplyAffinity_Click"/>
         </StackPanel>
 
+        <DataGrid Grid.Row="4"
+          ItemsSource="{Binding Threads}"
+          AutoGenerateColumns="False"
+          Margin="0,20,0,0"
+          AlternationCount="2">
+
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="Thread ID"
+                            Binding="{Binding Id}"
+                            Width="100"/>
+
+                <DataGridTextColumn Header="Priority"
+                            Binding="{Binding Priority}"
+                            Width="120"/>
+
+                <DataGridTextColumn Header="State"
+                            Binding="{Binding State}"
+                            Width="120"/>
+
+                <DataGridTextColumn Header="CPU Time"
+                            Binding="{Binding CpuTime}"
+                            Width="150"/>
+
+            </DataGrid.Columns>
+
+        </DataGrid>
     </Grid>
 </Window>
