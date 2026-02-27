@@ -115,6 +115,11 @@
                 <DataGridTextColumn Header="Процесс" Binding="{Binding Name}" Width="*"/>
                 <DataGridTextColumn Header="RAM (MB)" Binding="{Binding Memory}" Width="120"/>
                 <DataGridTextColumn Header="Приоритет" Binding="{Binding Priority}" Width="140"/>
+
+                <!-- 🔥 ДОБАВЛЕНА КОЛОНКА CPU -->
+                <DataGridTextColumn Header="CPU"
+                                    Binding="{Binding CpuAffinity}"
+                                    Width="180"/>
             </DataGrid.Columns>
         </DataGrid>
 
@@ -143,7 +148,7 @@
                     Click="Priority_Click"/>
         </StackPanel>
 
-        <!-- ✅ ДОБАВЛЕННЫЙ БЛОК CPU AFFINITY -->
+        <!-- CPU AFFINITY БЛОК -->
         <StackPanel Grid.Row="3"
                     Margin="0,25,0,0">
 

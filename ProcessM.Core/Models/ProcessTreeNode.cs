@@ -30,6 +30,17 @@ namespace ProcessM.Core.Models
             }
         }
 
+        private string _cpuAffinity;
+        public string CpuAffinity
+        {
+            get => _cpuAffinity;
+            set
+            {
+                _cpuAffinity = value;
+                OnPropertyChanged(nameof(CpuAffinity));
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string n) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using ProcessM.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using ProcessM.Core.Models;
 using ProcessM.Core.Services;
 
 namespace ProcessM.Core.ViewModels
@@ -53,7 +53,10 @@ namespace ProcessM.Core.ViewModels
                 Id = p.Id,
                 Name = p.Name,
                 Memory = p.MemoryUsage,
-                Priority = p.Priority
+                Priority = p.Priority,
+                CpuAffinity = AffinityHelper.MaskToString(
+        p.AffinityMask.ToInt64(),
+        Environment.ProcessorCount)
             }).ToList();
 
             SyncCollection(uiList);
@@ -66,12 +69,15 @@ namespace ProcessM.Core.ViewModels
                 var existing = Processes.FirstOrDefault(p => p.Id == proc.Id);
 
                 if (existing == null)
+                {
                     Processes.Add(proc);
+                }
                 else
                 {
                     existing.Memory = proc.Memory;
                     existing.Name = proc.Name;
                     existing.Priority = proc.Priority;
+                    existing.CpuAffinity = proc.CpuAffinity;
                 }
             }
 
@@ -98,10 +104,12 @@ namespace ProcessM.Core.ViewModels
         {
             if (SelectedProcess == null) return;
 
-            var mask = AffinityHelper.BuildMask(
+            var maskLong = AffinityHelper.BuildMask(
                 Cores.Select(c => c.IsEnabled).ToArray());
 
-            _service.SetAffinity(SelectedProcess.Id, mask);
+            var maskPtr = new IntPtr(maskLong);
+
+            _service.SetAffinity(SelectedProcess.Id, maskPtr);
         }
 
         private void LoadAffinity()
